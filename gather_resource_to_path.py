@@ -19,6 +19,9 @@ class GatherResourceToPath(Handler):
         r = requests.get(url)
         clusteroperators = r.json()
 
+        #if 'items' in clusteroperators and len(clusteroperators['items']) > 0:
+        #    clusteroperators = clusteroperators['items'][0]
+
         path = 'out/'+self.destPath
                     
         self.ensurePathExists(path)
@@ -29,3 +32,5 @@ class GatherResourceToPath(Handler):
         with open(outPath, 'wb') as f:
             f.write(bytes(yaml.dump(clusteroperators),"utf-8"))    
         
+    def handle(self,url):
+        self.processUrl(url)

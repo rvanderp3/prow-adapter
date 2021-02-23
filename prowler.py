@@ -10,6 +10,7 @@ from gather_nodes import GatherNodes
 from gather_pvs import GatherPVs
 from gather_events import GatherEvents
 from gather_finished import GatherFinished
+from gather_cv import GatherClusterVersion
 
 IGNORE_PATHS = ['artifacts/junit']
 
@@ -17,13 +18,14 @@ BASE_DOMAIN=""
 BASE_URL=""
 
 HANDLERS = [
-    GatherExtraDataPods(),
-    GatherPods(),
-    GatherClusterOperators(),
-    GatherNodes(),
-    GatherPVs(),
-    GatherEvents(),
-    GatherFinished()
+    # GatherExtraDataPods(),
+    # GatherPods(),
+     GatherClusterOperators(),
+    # GatherNodes(),
+    # GatherPVs(),
+    # GatherEvents(),
+    # GatherFinished(),
+     GatherClusterVersion()
 ]
 
 def handle(url):
