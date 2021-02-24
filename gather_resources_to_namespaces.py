@@ -74,6 +74,11 @@ class GatherResourcesToNamespaces(Handler):
             'outputDir': 'app',
             'outputName': 'statefulsets.yaml',
             'namespaces': {}
+        },        
+        {
+            'path': '/gather-extra/artifacts/namespaces.json',
+            'outputDir': '',            
+            'namespaces': {}
         } ]
 
 
