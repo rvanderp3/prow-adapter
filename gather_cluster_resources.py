@@ -30,6 +30,14 @@ class GatherClusterResources(Handler):
         {
             'path': 'gather-extra/artifacts/clusteroperators.json',
             'outputDir': 'config.openshift.io/clusteroperators',         
+        },
+        {
+            'path': 'gather-extra/artifacts/machineconfigpools.json',
+            'outputDir': 'config.openshift.io/machineconfiguration.openshift.io/machineconfigpools',         
+        },
+        {
+            'path': 'gather-extra/artifacts/machineconfigs.json',
+            'outputDir': 'config.openshift.io/machineconfiguration.openshift.io/machineconfigs',         
         }]
 
     def processResource(self, url, collection):

@@ -7,6 +7,8 @@ from gather_pod_logs import GatherPodLogs
 from gather_resources_to_namespaces import GatherResourcesToNamespaces
 from gather_finished import GatherFinished
 from gather_cluster_resources import GatherClusterResources
+from gather_namespaces import GatherNamespaces
+from gather_pods import GatherPods
 from job_handler import waitForJobsToComplete
 
 IGNORE_PATHS = ['artifacts/junit']
@@ -16,8 +18,10 @@ BASE_URL=""
 
 HANDLERS = [
     GatherClusterResources(),
+    GatherPods(),
     GatherPodLogs(),
     GatherResourcesToNamespaces(),
+    GatherNamespaces(),
     GatherFinished()
 ]
 

@@ -76,17 +76,23 @@ class GatherResourcesToNamespaces(Handler):
             'namespaces': {}
         },        
         {
-            'path': '/gather-extra/artifacts/namespaces.json',
-            'outputDir': '',            
+            'path': '/gather-extra/artifacts/machines.json',
+            'outputDir': 'machine.openshift.io/machines',            
             'namespaces': {}
-        } ]
+        },        
+        {
+            'path': '/gather-extra/artifacts/machinesets.json',
+            'outputDir': 'machine.openshift.io/machinesets',            
+            'namespaces': {}
+        }]
 
 
-    def storeYamlForNs(self, event, namespace, collection):
+    def storeYamlForNs(self, event, metadata, collection):
         nsArray = {
                 'apiVersion': 'v1',
                 'items':[]
         }
+        namespace = metadata['namespace']
         if namespace not in collection['namespaces']:
             collection['namespaces'][namespace] = nsArray
         else:
@@ -97,15 +103,28 @@ class GatherResourcesToNamespaces(Handler):
         for namespace in collection['namespaces']:
             path = 'out/namespaces/'+namespace+'/'+collection['outputDir']+'/'
             self.ensurePathExists(path)
-            outPath = os.path.join(path,collection['outputName'])
-            print("Writing "+ collection['outputName'] + " to ["+ collection['outputDir'] +"] in ["+namespace+"]")
-            with open(outPath, 'wb') as f:
-                f.write(bytes(yaml.dump(collection['namespaces'][namespace]),"utf-8"))    
+            
+            if 'outputName' in collection:
+                outPath = os.path.join(path,collection['outputName'])
+                print("Writing "+ collection['outputName'] + " to ["+ collection['outputDir'] +"] in ["+namespace+"]")
+                with open(outPath, 'wb') as f:
+                    f.write(bytes(yaml.dump(collection['namespaces'][namespace]),"utf-8"))    
+
+            elif 'items' in collection['namespaces'][namespace]:
+                for item in collection['namespaces'][namespace]['items']:
+                    metadata = item['metadata']
+                    if ('name' not in metadata) or \
+                        ('namespace' not in metadata):
+                        continue
+                    outPath = os.path.join(path,metadata['name']+".yaml")
+                    with open(outPath, 'wb') as f:
+                        f.write(bytes(yaml.dump(item),"utf-8"))    
+
 
     def processResource(self, url, collection):
         r = requests.get(url)
         events = r.json()
-
+        
         if 'items' not in events:
             return
         
@@ -116,8 +135,7 @@ class GatherResourcesToNamespaces(Handler):
             if ('name' not in metadata) or \
                 ('namespace' not in metadata):
                 continue
-
-            self.storeYamlForNs(event,metadata['namespace'],collection)
+            self.storeYamlForNs(event,metadata,collection)
         self.writeYamls(collection)
 
     def processUrl(self, url):
@@ -131,7 +149,7 @@ class GatherResourcesToNamespaces(Handler):
         
     def handles(self, url):
         for collection in self.collections:            
-            if collection['path'] in url:
+            if collection['path'] in url:                
                 return True
 
         

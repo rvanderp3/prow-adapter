@@ -5,11 +5,10 @@ import os
 import requests
 import yaml
 
-class GatherResourceToFiles(Handler):
+class GatherNamespaces(Handler):
     destPath = ""
-    def __init__(self, sourcePath, destPath):
-        self.destPath = destPath
-        Handler.__init__(self,sourcePath)
+    def __init__(self):
+        Handler.__init__(self,'gather-extra/artifacts/namespaces.json')
 
     def processUrl(self, url):
         r = requests.get(url)
@@ -23,15 +22,15 @@ class GatherResourceToFiles(Handler):
             metadata = item['metadata']
             if ('name' not in metadata):
                continue
-
-            path = 'out/'+self.destPath
+            name = metadata['name']
+            path = 'out/namespaces/'+name
                     
             if os.path.exists(path) == False:
                 os.makedirs(path)
             
-            outPath = os.path.join(path,metadata['name']+".yaml")
+            outPath = os.path.join(path,name+".yaml")
             
-            print("Saving resource to yaml ["+outPath+"]")
+            print("Saving namespace to yaml ["+outPath+"]")
             with open(outPath, 'wb') as f:
                 f.write(bytes(yaml.dump(item),"utf-8"))    
         
