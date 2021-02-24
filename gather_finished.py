@@ -6,8 +6,9 @@ import requests
 import yaml
 
 class GatherFinished(Handler):
-    def __init__(self):
+    def __init__(self):        
         Handler.__init__(self,"/finished.json")
+        self.setEnable(True)
 
     results = {}
 

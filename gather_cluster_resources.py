@@ -9,7 +9,8 @@ from job_handler import submitJob, tp
 class GatherClusterResources(Handler):
     collections = []
     def __init__(self):
-         self.collections = [{
+        Handler.__init__(self,'')
+        self.collections = [{
             'path': '/gather-extra/artifacts/nodes.json',
             'outputDir': 'core/nodes'            
         },

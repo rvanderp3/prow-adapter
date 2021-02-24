@@ -9,6 +9,7 @@ from gather_finished import GatherFinished
 from gather_cluster_resources import GatherClusterResources
 from gather_namespaces import GatherNamespaces
 from gather_pods import GatherPods
+from gather_must_gather import GatherMustGather
 from job_handler import waitForJobsToComplete
 
 IGNORE_PATHS = ['artifacts/junit']
@@ -17,17 +18,12 @@ BASE_DOMAIN=""
 BASE_URL=""
 
 HANDLERS = [
-    GatherClusterResources(),
-    GatherPods(),
-    GatherPodLogs(),
-    GatherResourcesToNamespaces(),
-    GatherNamespaces(),
-    GatherFinished()
+    
 ]
 
 def handle(url):
     for handler in HANDLERS:
-        if handler.handles(url):
+        if handler.enabled() and handler.handles(url):
             handler.handle(url)
 
 class TagParser(HTMLParser):
@@ -58,19 +54,31 @@ def getLinksAtLocation(url):
     parser = TagParser(url)
     parser.feed(response.text)
 
+def buildHandlers(mgOnly):
+    HANDLERS.append(GatherFinished())
+    
+    if mgOnly.lower() == 'true':
+        HANDLERS.append(GatherMustGather())        
+    else:
+        HANDLERS.append(GatherClusterResources())
+        HANDLERS.append(GatherPods())
+        HANDLERS.append(GatherResourcesToNamespaces())
+        HANDLERS.append(GatherNamespaces())
+        
+
+
 parser = argparse.ArgumentParser(description="Translates logs from prow in to something that omg and Insights can analyze")
-
 parser.add_argument('--url', dest='base_url', type=str, help='URL to prow job', required=True)
-
+parser.add_argument('--must-gather', dest='mg_enable', type=str, help='Retrieves a must-gather from the build if it exists.  If false, a must-gather archive is constructed from available data.', default='true')
 args = parser.parse_args()
 
-
-
 BASE_URL = args.base_url
+MG_ENABLE = args.mg_enable
 url = urlparse(BASE_URL)
 
 BASE_DOMAIN = url.hostname
 
+buildHandlers(MG_ENABLE)
 getLinksAtLocation(BASE_URL)
 
 waitForJobsToComplete()

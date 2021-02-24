@@ -9,6 +9,7 @@ class GatherResourcesToNamespaces(Handler):
     collections = []
 
     def __init__(self):
+        Handler.__init__(self,'')
         self.collections = [{
             'path': '/gather-extra/artifacts/events.json',
             'outputDir': 'core',

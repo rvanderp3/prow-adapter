@@ -3,6 +3,7 @@ class Handler:
     
     def __init__(self, path):
         self.path = path
+        self.enable = True
 
     def handle(self,url):
         print("Implement me")
@@ -16,3 +17,13 @@ class Handler:
 
     def complete(self):
         pass
+
+    def setEnable(self, enable):
+        self.enable = enable
+
+    def enabled(self):
+        return self.enable
+
+    def getName(self):
+        return "---"
+        
