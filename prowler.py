@@ -18,13 +18,13 @@ BASE_DOMAIN=""
 BASE_URL=""
 
 HANDLERS = [
-    # GatherExtraDataPods(),
-    # GatherPods(),
+     GatherExtraDataPods(),
+     GatherPods(),
      GatherClusterOperators(),
-    # GatherNodes(),
-    # GatherPVs(),
-    # GatherEvents(),
-    # GatherFinished(),
+     GatherNodes(),
+     GatherPVs(),
+     GatherEvents(),
+     GatherFinished(),
      GatherClusterVersion()
 ]
 
