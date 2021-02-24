@@ -3,12 +3,9 @@ from urllib.parse import urlparse
 from handler import Handler
 import os
 import requests
-from concurrent.futures import ThreadPoolExecutor
-import concurrent
+from job_handler import submitJob
 
-class GatherExtraDataPods(Handler):
-    tp = ThreadPoolExecutor(max_workers=10)
-    futures = []
+class GatherPodLogs(Handler):
     def __init__(self):
         Handler.__init__(self,"/gather-extra/artifacts/pods")
 
@@ -66,10 +63,5 @@ class GatherExtraDataPods(Handler):
             parts['container'] == None:
             return
                 
-        self.futures.append(self.tp.submit(self.downloadFile, parts, url))        
+        submitJob(self.downloadFile, parts, url)
 
-    def complete(self):
-        print("Waiting for pod log downloads to complete")
-        for executor in concurrent.futures.as_completed(self.futures):
-            pass
-        print("Pod logs have been written to 'out/namespaces'")

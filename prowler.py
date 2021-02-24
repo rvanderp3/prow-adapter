@@ -3,14 +3,11 @@ import argparse
 import requests
 from html.parser import HTMLParser
 from urllib.parse import urlparse
-from gather_extra_pods import GatherExtraDataPods
-from gather_pods import GatherPods
-from gather_cluster_operators import GatherClusterOperators
-from gather_nodes import GatherNodes
-from gather_pvs import GatherPVs
-from gather_events import GatherEvents
+from gather_pod_logs import GatherPodLogs
+from gather_resources_to_namespaces import GatherResourcesToNamespaces
 from gather_finished import GatherFinished
-from gather_cv import GatherClusterVersion
+from gather_cluster_resources import GatherClusterResources
+from job_handler import waitForJobsToComplete
 
 IGNORE_PATHS = ['artifacts/junit']
 
@@ -18,14 +15,10 @@ BASE_DOMAIN=""
 BASE_URL=""
 
 HANDLERS = [
-     GatherExtraDataPods(),
-     GatherPods(),
-     GatherClusterOperators(),
-     GatherNodes(),
-     GatherPVs(),
-     GatherEvents(),
-     GatherFinished(),
-     GatherClusterVersion()
+    GatherClusterResources(),
+    GatherPodLogs(),
+    GatherResourcesToNamespaces(),
+    GatherFinished()
 ]
 
 def handle(url):
@@ -76,6 +69,9 @@ BASE_DOMAIN = url.hostname
 
 getLinksAtLocation(BASE_URL)
 
+waitForJobsToComplete()
+
 for handler in HANDLERS:
     handler.complete()
+
 

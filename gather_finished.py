@@ -9,16 +9,11 @@ class GatherFinished(Handler):
     def __init__(self):
         Handler.__init__(self,"/finished.json")
 
-    results = {
-        
-    }
-
+    results = {}
 
     def processUrl(self, url):
-
         r = requests.get(url)
         result = r.json()
-
         parts = url.split("/")
         part = parts[-2:-1][0]
         self.results[part] = result["passed"]
